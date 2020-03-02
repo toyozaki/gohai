@@ -2,6 +2,12 @@
 
 package network
 
+import (
+	"os"
+
+	"github.com/toyozaki/GOnetstat"
+)
+
 func getNetworkInfo() (networkInfo map[string]interface{}, err error) {
 	networkInfo = make(map[string]interface{})
 
@@ -26,5 +32,14 @@ func getNetworkInfo() (networkInfo map[string]interface{}, err error) {
 		networkInfo["ipaddressv6"] = ipAddressV6
 	}
 
+	// Only supported on linux
+	if _, err := os.Stat("/proc/net"); !os.IsNotExist(err) {
+		_portscan := make(map[string]interface{})
+		_portscan["tcp"] = GOnetstat.Tcp()
+		_portscan["tcp6"] = GOnetstat.Tcp6()
+		_portscan["udp"] = GOnetstat.Udp()
+		_portscan["udp6"] = GOnetstat.Udp6()
+		networkInfo["portinfo"] = _portscan
+	}
 	return
 }
