@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/DataDog/gohai/processes/gops"
+	"github.com/toyozaki/gohai/processes/gops"
 )
 
 type ProcessField [7]interface{}
