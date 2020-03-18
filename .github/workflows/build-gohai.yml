@@ -1,0 +1,39 @@
+name: Build gohai
+
+on:
+  release:
+      branches: custom/master　 
+
+jobs:
+  build-gohai:
+    name: Build and upload to release
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Go 1.14
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.14
+      id: go
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+      
+    - name: Get dependencies
+      run: go get -v -t -d ./...
+
+    - name: Build
+      run: go run make.go
+      env:
+        CGO_ENABLED: 0 
+
+    - name: Zip
+      uses: montudor/action-zip@v0.1.0
+      with:
+        args: zip -qq ./gohai_linux_amd64.zip ./gohai
+
+    - name: Upload to release
+      uses: JasonEtco/upload-to-release@master
+      with:
+        args: gohai_linux_amd64.zip application/zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
